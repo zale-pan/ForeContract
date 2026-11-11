@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=84,<85"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forecontract-scripted"
+version = "0.1.0"
+description = "ForeContract deterministic ScriptedPlanner fixture."
+requires-python = ">=3.12"
+dependencies = ["forecontract-core>=0.1,<0.2", "pydantic>=2,<3"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false

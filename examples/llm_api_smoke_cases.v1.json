@@ -1,0 +1,66 @@
+{
+  "schema_version": "1",
+  "fixture_id": "p4-t02-smoke-v1",
+  "cases": [
+    {
+      "case_id": "direct",
+      "mode": "direct",
+      "initial_state": {
+        "order": {
+          "status": "pending"
+        },
+        "done": false
+      },
+      "expected_action": {
+        "schema_version": "0.1",
+        "action_type": "mark_done",
+        "payload": {
+          "observed": "pending"
+        }
+      },
+      "expected_terminal": "completed",
+      "expected_provider_calls": 1,
+      "expected_reads": 0
+    },
+    {
+      "case_id": "retrieval-pending",
+      "mode": "retrieval",
+      "initial_state": {
+        "order": {
+          "status": "pending"
+        },
+        "done": false
+      },
+      "expected_action": {
+        "schema_version": "0.1",
+        "action_type": "mark_done",
+        "payload": {
+          "observed": "pending"
+        }
+      },
+      "expected_terminal": "completed",
+      "expected_provider_calls": 2,
+      "expected_reads": 1
+    },
+    {
+      "case_id": "retrieval-ready",
+      "mode": "retrieval",
+      "initial_state": {
+        "order": {
+          "status": "ready"
+        },
+        "done": false
+      },
+      "expected_action": {
+        "schema_version": "0.1",
+        "action_type": "mark_done",
+        "payload": {
+          "observed": "ready"
+        }
+      },
+      "expected_terminal": "completed",
+      "expected_provider_calls": 2,
+      "expected_reads": 1
+    }
+  ]
+}

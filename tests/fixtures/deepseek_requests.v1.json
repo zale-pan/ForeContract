@@ -1,0 +1,806 @@
+{
+  "direct": {
+    "schema_version": "0.1",
+    "request_id": "probe-request",
+    "model_context": {
+      "schema_version": "0.1",
+      "run_id": "run-retrieval-demo",
+      "goal_id": "goal-retrieval",
+      "goal_text": "finish the offline retrieval task",
+      "task_criteria": {
+        "schema_version": "0.1",
+        "goal_id": "goal-retrieval",
+        "conditions": [
+          {
+            "schema_version": "0.1",
+            "outcome_type": "json_rule",
+            "payload": {
+              "schema_version": "0.1",
+              "rule_type": "value_equals",
+              "path": [
+                "done"
+              ],
+              "expected": true
+            },
+            "required": true
+          }
+        ]
+      },
+      "capabilities": {
+        "schema_version": "0.1",
+        "adapter_name": "fake",
+        "environment_type": "fake",
+        "supported_actions": [
+          "mark_done"
+        ],
+        "supported_observation_types": [
+          "fake.state"
+        ],
+        "supported_condition_types": [],
+        "supported_outcome_types": [
+          "json_rule"
+        ],
+        "metadata": {}
+      },
+      "action_guidance": {
+        "mark_done": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outcome_guidance": {
+        "json_rule": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "observation": {
+      "schema_version": "0.1",
+      "observation_id": "obs-before",
+      "environment_type": "fake",
+      "state": {
+        "order": {
+          "status": "pending"
+        },
+        "done": false
+      },
+      "timestamp": "2026-11-03T12:00:00Z",
+      "summary": null,
+      "artifacts": [],
+      "metadata": {}
+    },
+    "response_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "proposed_action",
+        "expected_outcomes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.1"
+        },
+        "proposed_action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "action_type"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.1"
+            },
+            "action_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "payload": {
+              "type": "object"
+            },
+            "metadata": {
+              "type": "object",
+              "maxProperties": 0
+            }
+          }
+        },
+        "expected_outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "outcome_type"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "0.1"
+              },
+              "outcome_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "payload": {
+                "type": "object"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "intent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "task_completion_hint": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "max_output_tokens": 1024
+  },
+  "retrieval-pending": {
+    "schema_version": "0.1",
+    "run_id": "run-retrieval-demo",
+    "plan_id": "probe-plan",
+    "turn": 2,
+    "request_id": "probe-request",
+    "base_request": {
+      "schema_version": "0.1",
+      "request_id": "probe-request",
+      "model_context": {
+        "schema_version": "0.1",
+        "run_id": "run-retrieval-demo",
+        "goal_id": "goal-retrieval",
+        "goal_text": "finish the offline retrieval task",
+        "task_criteria": {
+          "schema_version": "0.1",
+          "goal_id": "goal-retrieval",
+          "conditions": [
+            {
+              "schema_version": "0.1",
+              "outcome_type": "json_rule",
+              "payload": {
+                "schema_version": "0.1",
+                "rule_type": "value_equals",
+                "path": [
+                  "done"
+                ],
+                "expected": true
+              },
+              "required": true
+            }
+          ]
+        },
+        "capabilities": {
+          "schema_version": "0.1",
+          "adapter_name": "fake",
+          "environment_type": "fake",
+          "supported_actions": [
+            "mark_done"
+          ],
+          "supported_observation_types": [
+            "fake.state"
+          ],
+          "supported_condition_types": [],
+          "supported_outcome_types": [
+            "json_rule"
+          ],
+          "metadata": {}
+        },
+        "action_guidance": {
+          "mark_done": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outcome_guidance": {
+          "json_rule": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "observation": {
+        "schema_version": "0.1",
+        "observation_id": "obs-before",
+        "environment_type": "fake",
+        "state": {
+          "order": {
+            "status": "pending"
+          },
+          "done": false
+        },
+        "timestamp": "2026-11-03T12:00:00Z",
+        "summary": null,
+        "artifacts": [],
+        "metadata": {}
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "proposed_action",
+          "expected_outcomes"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "0.1"
+          },
+          "proposed_action": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "action_type"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "0.1"
+              },
+              "action_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "payload": {
+                "type": "object"
+              },
+              "metadata": {
+                "type": "object",
+                "maxProperties": 0
+              }
+            }
+          },
+          "expected_outcomes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schema_version",
+                "outcome_type"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "0.1"
+                },
+                "outcome_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "payload": {
+                  "type": "object"
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "intent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decision_summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "task_completion_hint": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      },
+      "max_output_tokens": 1024
+    },
+    "scope": {
+      "schema_version": "0.1",
+      "scope_id": "probe-scope",
+      "run_id": "run-retrieval-demo",
+      "observation_id": "probe-observation",
+      "entries": [
+        {
+          "schema_version": "0.1",
+          "evidence_id": "probe-evidence",
+          "source_observation_id": "probe-observation",
+          "kind": "observation",
+          "raw_sha256": "57dc3706b3c8620374d752ab88e8802d37f62f4d2316eb33ef65290e3580c27d",
+          "raw_bytes": 63,
+          "views": [
+            {
+              "schema_version": "0.1",
+              "view_id": "probe-view",
+              "selector": [
+                "state",
+                "order",
+                "status"
+              ],
+              "format": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "exchanges": [
+      {
+        "schema_version": "0.1",
+        "scope_id": "probe-scope",
+        "run_id": "run-retrieval-demo",
+        "plan_id": "probe-plan",
+        "turn": 1,
+        "request_id": "previous-request",
+        "evidence_id": "probe-evidence",
+        "view_id": "probe-view",
+        "status": "found",
+        "source_observation_id": "probe-observation",
+        "raw_sha256": "57dc3706b3c8620374d752ab88e8802d37f62f4d2316eb33ef65290e3580c27d",
+        "raw_bytes": 63,
+        "selector": [
+          "state",
+          "order",
+          "status"
+        ],
+        "format": "text",
+        "text_range": null,
+        "partial": false,
+        "value": "pending",
+        "value_sha256": "12adac54ac6f7140109391b670b3cbcd51f083d8f5ee62ce26857c794ed67d36",
+        "value_bytes": 9
+      }
+    ],
+    "response_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "proposed_action",
+        "expected_outcomes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.1"
+        },
+        "proposed_action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "action_type"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.1"
+            },
+            "action_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "payload": {
+              "type": "object"
+            },
+            "metadata": {
+              "type": "object",
+              "maxProperties": 0
+            }
+          }
+        },
+        "expected_outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "outcome_type"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "0.1"
+              },
+              "outcome_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "payload": {
+                "type": "object"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "intent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "task_completion_hint": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "retrieval-ready": {
+    "schema_version": "0.1",
+    "run_id": "run-retrieval-demo",
+    "plan_id": "probe-plan",
+    "turn": 2,
+    "request_id": "probe-request",
+    "base_request": {
+      "schema_version": "0.1",
+      "request_id": "probe-request",
+      "model_context": {
+        "schema_version": "0.1",
+        "run_id": "run-retrieval-demo",
+        "goal_id": "goal-retrieval",
+        "goal_text": "finish the offline retrieval task",
+        "task_criteria": {
+          "schema_version": "0.1",
+          "goal_id": "goal-retrieval",
+          "conditions": [
+            {
+              "schema_version": "0.1",
+              "outcome_type": "json_rule",
+              "payload": {
+                "schema_version": "0.1",
+                "rule_type": "value_equals",
+                "path": [
+                  "done"
+                ],
+                "expected": true
+              },
+              "required": true
+            }
+          ]
+        },
+        "capabilities": {
+          "schema_version": "0.1",
+          "adapter_name": "fake",
+          "environment_type": "fake",
+          "supported_actions": [
+            "mark_done"
+          ],
+          "supported_observation_types": [
+            "fake.state"
+          ],
+          "supported_condition_types": [],
+          "supported_outcome_types": [
+            "json_rule"
+          ],
+          "metadata": {}
+        },
+        "action_guidance": {
+          "mark_done": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outcome_guidance": {
+          "json_rule": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "observation": {
+        "schema_version": "0.1",
+        "observation_id": "obs-before",
+        "environment_type": "fake",
+        "state": {
+          "order": {
+            "status": "pending"
+          },
+          "done": false
+        },
+        "timestamp": "2026-11-03T12:00:00Z",
+        "summary": null,
+        "artifacts": [],
+        "metadata": {}
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "proposed_action",
+          "expected_outcomes"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "0.1"
+          },
+          "proposed_action": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "action_type"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "0.1"
+              },
+              "action_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "payload": {
+                "type": "object"
+              },
+              "metadata": {
+                "type": "object",
+                "maxProperties": 0
+              }
+            }
+          },
+          "expected_outcomes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schema_version",
+                "outcome_type"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "0.1"
+                },
+                "outcome_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "payload": {
+                  "type": "object"
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "intent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "decision_summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "task_completion_hint": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      },
+      "max_output_tokens": 1024
+    },
+    "scope": {
+      "schema_version": "0.1",
+      "scope_id": "probe-scope",
+      "run_id": "run-retrieval-demo",
+      "observation_id": "probe-observation",
+      "entries": [
+        {
+          "schema_version": "0.1",
+          "evidence_id": "probe-evidence",
+          "source_observation_id": "probe-observation",
+          "kind": "observation",
+          "raw_sha256": "9f4d7fdef571715d093159977e0ec0e26fd616e625ea003ce1c6b8d82037d07f",
+          "raw_bytes": 61,
+          "views": [
+            {
+              "schema_version": "0.1",
+              "view_id": "probe-view",
+              "selector": [
+                "state",
+                "order",
+                "status"
+              ],
+              "format": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "exchanges": [
+      {
+        "schema_version": "0.1",
+        "scope_id": "probe-scope",
+        "run_id": "run-retrieval-demo",
+        "plan_id": "probe-plan",
+        "turn": 1,
+        "request_id": "previous-request",
+        "evidence_id": "probe-evidence",
+        "view_id": "probe-view",
+        "status": "found",
+        "source_observation_id": "probe-observation",
+        "raw_sha256": "9f4d7fdef571715d093159977e0ec0e26fd616e625ea003ce1c6b8d82037d07f",
+        "raw_bytes": 61,
+        "selector": [
+          "state",
+          "order",
+          "status"
+        ],
+        "format": "text",
+        "text_range": null,
+        "partial": false,
+        "value": "ready",
+        "value_sha256": "40ec7f71ea684c8b976e79e8e425f87779e6de57f4821dcfc8066dbcad2defe0",
+        "value_bytes": 7
+      }
+    ],
+    "response_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "proposed_action",
+        "expected_outcomes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.1"
+        },
+        "proposed_action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "action_type"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.1"
+            },
+            "action_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "payload": {
+              "type": "object"
+            },
+            "metadata": {
+              "type": "object",
+              "maxProperties": 0
+            }
+          }
+        },
+        "expected_outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "outcome_type"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "0.1"
+              },
+              "outcome_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "payload": {
+                "type": "object"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "intent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "task_completion_hint": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

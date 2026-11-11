@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=84,<85"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forecontract-web"
+version = "0.1.0"
+description = "ForeContract Web distribution: strict Web contracts, five rules, Playwright adapter, Runtime domain hooks/support and criteria prevalidation."
+requires-python = ">=3.12"
+dependencies = ["forecontract-core>=0.1,<0.2", "pydantic>=2,<3"]
+
+[project.optional-dependencies]
+browser = ["playwright==1.64.1"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false

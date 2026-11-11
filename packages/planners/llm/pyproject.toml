@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=84,<85"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forecontract-llm"
+version = "0.1.0"
+description = "ForeContract offline structured LLM planner with strict capability, budget and lifecycle gates."
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = ["forecontract-core>=0.1,<0.2", "pydantic>=2,<3"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false

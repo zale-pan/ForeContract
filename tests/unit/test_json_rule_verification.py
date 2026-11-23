@@ -872,11 +872,13 @@ def test_repeated_calls_are_deterministic() -> None:
     assert first == second
 
 
-def test_the_public_surface_is_exactly_ten_names() -> None:
+def test_the_public_surface_is_exactly_twelve_names() -> None:
     import forecontract.verification as package
 
     assert sorted(package.__all__) == [
+        "CompositeVerifier",
         "JsonRuleEvaluator",
+        "ModelVerifier",
         "PathExistsRule",
         "RuleEvaluation",
         "RuleValidationHooks",
@@ -887,7 +889,7 @@ def test_the_public_surface_is_exactly_ten_names() -> None:
         "VerificationError",
         "VerificationEvidence",
     ]
-    assert len(package.__all__) == 10
+    assert len(package.__all__) == 12
     assert not hasattr(package, "VerificationStatus")
     assert not hasattr(package, "OutcomeVerification")
     import forecontract

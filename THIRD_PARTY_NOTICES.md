@@ -52,8 +52,6 @@ no value was invented here.
 * browser automation: `playwright` drives a separately installed Chromium build, which is not
   distributed here and is governed by its own licence.
 
-## Unverified entries
+## Scope / 范围
 
-The frozen evidence has no licence or URL for: h11.
-These entries stay `unknown`; a code-ownership statement or a text scan is not a third-party
-licence proof.
+The table records the framework dependency reference environment. End users install third-party distributions separately. Optional Web tests use a separately installed Chromium. Native Coding adds no bundled executable. 安装依赖各自遵循上游许可证。框架源码未附带浏览器或 Electron。

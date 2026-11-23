@@ -64,26 +64,31 @@ def _action_schema() -> dict[str, object]:
     }
 
 
-def _outcome_schema() -> dict[str, object]:
+def _outcome_schema(supported_outcome_types: tuple[str, ...] | list[str] | None = None) -> dict[str, object]:
     """The advertised shape of one ``forecontract.models.actions.ExpectedOutcome``.
 
     Core's ``ExpectedOutcome`` has no ``metadata`` field, so the schema advertised to the model
     must not invent one; a response that carries it is refused as an undeclared field.
     """
+    outcome_type_schema: dict[str, object] = {"type": "string", "minLength": 1}
+    if supported_outcome_types is not None:
+        outcome_type_schema["enum"] = list(dict.fromkeys(supported_outcome_types))
     return {
         "type": "object",
         "additionalProperties": False,
         "required": ["schema_version", "outcome_type"],
         "properties": {
             "schema_version": {"const": _SCHEMA_VERSION},
-            "outcome_type": {"type": "string", "minLength": 1},
+            "outcome_type": outcome_type_schema,
             "payload": {"type": "object"},
             "required": {"type": "boolean"},
         },
     }
 
 
-def _response_schema() -> dict[str, object]:
+def _response_schema(
+    supported_outcome_types: tuple[str, ...] | list[str] | None = None,
+) -> dict[str, object]:
     """Describe the single legal response shape for the provider.
 
     The schema is documentation handed to the provider; the decoder below enforces the same
@@ -99,7 +104,7 @@ def _response_schema() -> dict[str, object]:
             "expected_outcomes": {
                 "type": "array",
                 "minItems": 1,
-                "items": _outcome_schema(),
+                "items": _outcome_schema(supported_outcome_types),
             },
             "intent": {"type": ["string", "null"]},
             "decision_summary": {"type": ["string", "null"]},
@@ -135,7 +140,9 @@ def build_request(
             "the observation environment does not match the declared capability environment",
             ("environment_type",),
         )
-    schema = _response_schema()
+    schema = _response_schema(
+        supported_outcome_types=planner_context.capabilities.supported_outcome_types
+    )
     measure_json(
         schema,
         max_depth=planner_config.max_json_depth,

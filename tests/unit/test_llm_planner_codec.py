@@ -187,13 +187,81 @@ def test_build_request_produces_the_declared_structured_request() -> None:
 
 
 def test_the_advertised_outcome_schema_matches_the_core_outcome_shape() -> None:
-    """F05: the schema advertises exactly the fields Core's ExpectedOutcome actually has."""
+    """F05: the schema advertises exactly the fields Core's ExpectedOutcome actually has and derives outcome_type.enum."""
     outcome = make_request().response_schema["properties"]["expected_outcomes"]["items"]
     assert outcome["additionalProperties"] is False
     assert set(outcome["properties"]) == {
         "schema_version", "outcome_type", "payload", "required",
     }
     assert "metadata" not in outcome["properties"]
+
+    # Build two consecutive distinct non-project contexts and verify outcome_type.enum matches
+    # each context's supported_outcome_types deterministically with no duplicates or cross-request bleed
+    ctx_a = context()
+    caps_a = ctx_a.capabilities.model_copy(
+        update={"supported_outcome_types": ["alpha_outcome", "beta_outcome"]}
+    )
+    req_a = build_request(
+        context=ctx_a.model_copy(
+            update={
+                "capabilities": caps_a,
+                "outcome_guidance": {
+                    "alpha_outcome": {"payload": {"type": "object"}},
+                    "beta_outcome": {"payload": {"type": "object"}},
+                },
+            }
+        ),
+        observation=observation(),
+        config=config(),
+        request_id="req-enum-a",
+    )
+    ot_a = req_a.response_schema["properties"]["expected_outcomes"]["items"]["properties"]["outcome_type"]
+    assert ot_a == {"type": "string", "minLength": 1, "enum": ["alpha_outcome", "beta_outcome"]}
+
+    ctx_b = context()
+    caps_b = ctx_b.capabilities.model_copy(
+        update={"supported_outcome_types": ["gamma_outcome", "alpha_outcome"]}
+    )
+    req_b = build_request(
+        context=ctx_b.model_copy(
+            update={
+                "capabilities": caps_b,
+                "outcome_guidance": {
+                    "gamma_outcome": {"payload": {"type": "object"}},
+                    "alpha_outcome": {"payload": {"type": "object"}},
+                },
+            }
+        ),
+        observation=observation(),
+        config=config(),
+        request_id="req-enum-b",
+    )
+    ot_b = req_b.response_schema["properties"]["expected_outcomes"]["items"]["properties"]["outcome_type"]
+    assert ot_b == {"type": "string", "minLength": 1, "enum": ["gamma_outcome", "alpha_outcome"]}
+    # First request schema was not mutated by the second request
+    assert ot_a["enum"] == ["alpha_outcome", "beta_outcome"]
+
+    # Explicit empty supported_outcome_types=[] must keep enum=[] without mutating prior requests
+    ctx_empty = context()
+    caps_empty = ctx_empty.capabilities.model_copy(
+        update={"supported_outcome_types": []}
+    )
+    req_empty = build_request(
+        context=ctx_empty.model_copy(
+            update={
+                "capabilities": caps_empty,
+                "outcome_guidance": {},
+            }
+        ),
+        observation=observation(),
+        config=config(),
+        request_id="req-enum-empty",
+    )
+    ot_empty = req_empty.response_schema["properties"]["expected_outcomes"]["items"]["properties"]["outcome_type"]
+    assert ot_empty["enum"] == []
+    assert ot_empty == {"type": "string", "minLength": 1, "enum": []}
+    assert ot_a["enum"] == ["alpha_outcome", "beta_outcome"]
+    assert ot_b["enum"] == ["gamma_outcome", "alpha_outcome"]
 
 
 def test_an_outcome_metadata_field_is_refused_even_when_empty() -> None:

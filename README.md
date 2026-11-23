@@ -2,6 +2,8 @@
 
 [简体中文](README.zh-CN.md)
 
+**ForeContract is a contract-driven Python runtime for agents.** It binds a proposed action to its expected outcome and verification method before execution, then checks the expectation against a fresh observation.
+
 I started ForeContract with a web testing problem. Change a name in a form and click Save. The browser can tell you the click happened. If you open the record tomorrow and the old name is still there, what did yesterday’s test actually establish?
 
 There was a decision to make *before* clicking: **what would count as a successful save?** Seeing a confirmation toast and reopening the same record to find the new name are two different expectations. Pick one after the action and it’s easy to find an explanation that fits. ForeContract records the expectation early enough for the result to prove it wrong.
@@ -13,6 +15,22 @@ The original design names this execution loop **Observe → Forecast → Commit 
 In the Save example, the model sees an existing record (Observe). It proposes saving the change and predicts what it should read on reopening the record (Forecast). The runtime binds the action, expectation and check into a **Contract** for this step (Commit). The browser clicks (Execute), and the verifier compares a fresh observation with the expectation (Validate). A mismatch can inform a retry, a new plan or a decision to stop (Recover). Commit here means making the step’s contract definite. Git commits and user approval for local commands are separate concepts.
 
 I think of this as a way of reasoning about execution. Alongside a proposal for what to do next, the model leaves behind a judgment that the world can contradict. Whether that extra work pays off is an empirical question, and I don’t have evidence of a general advantage over other agent loops.
+
+### Using the runtime in your project
+
+OFCEVR describes one step over time. This diagram shows how the components fit together when you build that step.
+
+```mermaid
+flowchart TD
+    H["Host · task and domain rules"] -->|configures| R["Core Runtime · commit, execute and verify"]
+    P["Planner · action and expected outcomes"] -->|forecast| R
+    R -->|contracted action| A["Adapter · act and observe"]
+    A -->|observations and results| R
+    A <-->|interacts with| E["Environment · simulated state, browser or workspace"]
+    R --> T["Trace · attempts and verification"]
+```
+
+The host can be a Python script or the backend of a desktop app. It wires the components together and supplies task criteria. Core asks the planner for the next step and uses the adapter to interact with the environment. To change how actions are proposed, start with the [planner protocol](packages/core/src/forecontract/runtime/protocols.py). For a new environment, start with the [Fake adapter](packages/adapters/fake). To change what counts as success, look at the domain check below.
 
 ### What changed when I tried this with code
 
@@ -47,6 +65,21 @@ if ($LASTEXITCODE) { throw 'Demo failed' }
 ```
 
 Look for `terminal_status: completed` and `reason_code: TASK_ACHIEVED` in the JSON result. The output also gives the paths to the trace and episodic memory. Web automation needs a separate browser installation. The native Coding adapter targets Windows. The example exercises one deterministic action; general coding reliability is still experimental.
+
+### Read a contract alongside a real trace
+
+Start in `build_components()` in the [offline example](examples/offline_runtime_demo.py). The initial observation has `done=false`; the scripted planner proposes `mark_done`. In `completion_condition()`, the expected value at path `["done"]` is `true`. The host's `DemoDomain.prepare_contract()` binds that expectation to the `json_rule` verifier. The environment is simulated. These records come from an actual Core run.
+
+After running the command above, open the `trace.jsonl` file printed as `trace_path`. Each line is one event. Follow these fields from the same `demo-run`:
+
+| sequence | kind | What the record establishes |
+|---:|---|---|
+| 2 | `contract_committed` | Step `rt-step-3` is bound to `rt-contract-2` before execution. |
+| 3 → 4 | `attempt_started` → `attempt_finished` | Attempt `rt-attempt-6` under that contract reports `execution_status=succeeded`. |
+| 5 | `verification_recorded` | For that attempt, `scope=attempt` and `verification_status=pass`: the action's expected effect passed its check. |
+| 6 → 7 | `verification_recorded` → `run_finished` | The task-level check with `scope=run` also passed. The terminal record points back to it via `rt-record-10`. |
+
+The console summary reports `steps_started=1`, `attempts_started=1` and `completed / TASK_ACHIEVED`. Sequence 4 tells you the adapter executed the action successfully. Sequences 5 and 6 tell you why the runtime accepted the effect and the goal.
 
 ## Recover an interrupted wheel download
 

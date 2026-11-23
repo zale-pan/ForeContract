@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+**ForeContract 是一个以契约驱动的 Python Agent 运行时。** 它在执行前绑定动作、预期结果和验证方式，执行后用新的环境观察核对预期。
+
 我最早做 ForeContract，是想让一个 Agent 测网页。比如在表单里改一个名字，点“保存”。浏览器很容易告诉我们按钮点到了。可要是产品第二天重新打开，名字还是旧的，昨天那次测试究竟测到了什么？
 
 这个小例子里，有一个很容易被跳过去的决定：**点按钮之前，我们认为怎样才算保存成功？** 如果关心的是数据存下来了，那么“看到了成功提示”和“重新打开同一条记录，读到了新名字”就是两种不同的预期。等到点击之后才挑一种解释，几乎总能把刚刚发生的事说圆。ForeContract 的做法是把预期提前写下来，再给真实结果一次推翻它的机会。
@@ -13,6 +15,22 @@
 在刚才的例子里，模型看到的是一条已有记录（Observe）。它提出保存，并预测重新打开后应读到什么（Forecast）。运行时把动作、预期和检查方式一起确定下来（Commit）；这份绑定就是这一步的 **Contract**。浏览器随后执行点击（Execute），验证器拿新的观察与预期比较（Validate）。如果不一致，这次偏差会成为后续重试、重新规划或停止的依据（Recover）。这里的 Commit 指运行时确定本次契约，和 Git 提交无关；涉及写文件或本机命令时，用户审批又是另一件事。
 
 我愿意把它称为一种面向执行的推理思路：模型除了提出“接下来做什么”，还要留下一个可能被事实证伪的判断。这是本项目探索的设计，并没有实验证明它对所有任务都比其他 Agent 循环有效。
+
+### 把运行时接进自己的项目
+
+OFCEVR 描述一步怎样运行。下图说明搭建这一步时，哪些部分由你提供，哪些交给 Core。
+
+```mermaid
+flowchart TD
+    H["宿主 · 任务与领域规则"] -->|组装| R["Core Runtime · 提交契约、驱动执行与验证"]
+    P["Planner · 提出动作和预期"] -->|Forecast| R
+    R -->|契约中的动作| A["Adapter · 执行与观察"]
+    A -->|观察与执行结果| R
+    A <-->|交互| E["环境 · 模拟状态、浏览器或工作区"]
+    R --> T["Trace · 记录尝试与验证"]
+```
+
+宿主可以是一段 Python 脚本，也可以是桌面应用的后端。宿主组装组件并提供任务条件；Core 向 Planner 请求下一步，由 Adapter 与环境交互。换模型时先看[规划器接口](packages/core/src/forecontract/runtime/protocols.py)，接入新环境时先看[适配器示例](packages/adapters/fake)。如果只是想改变“什么算成功”，可以先从下面的领域检查入手。
 
 ### 从网页走到写代码，问题变难了
 
@@ -47,6 +65,21 @@ if ($LASTEXITCODE) { throw 'Demo failed' }
 ```
 
 成功时，结果 JSON 中的 `terminal_status` 为 `completed`，`reason_code` 为 `TASK_ACHIEVED`，并给出执行轨迹和情景记忆文件的位置。Web 自动化需要另装浏览器。原生 Coding 适配器面向 Windows。示例覆盖一次确定性动作，通用编码任务仍处于实验阶段。
+
+### 对着一次真实运行读 Contract
+
+在[离线示例](examples/offline_runtime_demo.py)中，先看 `build_components()`：初始观察为 `done=false`，脚本规划器提出 `mark_done`。再看 `completion_condition()`，它要求路径 `["done"]` 的值等于 `true`。`DemoDomain.prepare_contract()` 把这个预期交给 `json_rule` 验证器。环境是模拟的，下面的记录来自实际运行 Core。
+
+执行上面的命令后，用它输出的 `trace_path` 打开 `trace.jsonl`。每行一个事件；这里摘出同一次 `demo-run` 的关键字段：
+
+| sequence | kind | 这条记录能说明什么 |
+|---:|---|---|
+| 2 | `contract_committed` | `rt-step-3` 已绑定 `rt-contract-2`，此时尚未执行。 |
+| 3 → 4 | `attempt_started` → `attempt_finished` | 同一契约的 `rt-attempt-6` 得到 `execution_status=succeeded`。 |
+| 5 | `verification_recorded` | 同一 attempt 的 `scope=attempt`、`verification_status=pass`，说明动作预期通过了检查。 |
+| 6 → 7 | `verification_recorded` → `run_finished` | 任务级检查 `scope=run` 也通过；终态引用这条记录 `rt-record-10`。 |
+
+控制台摘要给出 `steps_started=1`、`attempts_started=1` 和 `completed / TASK_ACHIEVED`。单看第 4 条序号对应的执行回执，还不能得出任务完成；第 5、6 条分别说明动作效果和任务目标通过了检查。
 
 ## 恢复中断的 wheel 下载
 

@@ -1,0 +1,37 @@
+# Python build and test outputs (never generated inside the checkout for P1 tasks)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+/dist/
+/build/
+*.whl
+*.tar.gz
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local environment files
+.env
+
+# Governance evidence is intentionally NOT ignored: artifacts/**, task_interactions/**,
+# docs/**, tasks/** and the generated review views are tracked audit records.
+
+# Public development caches and generated output (never a substitute for the export whitelist)
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Local scratch and machine-specific files
+*.local
+.env

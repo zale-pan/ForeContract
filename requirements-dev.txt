@@ -1,0 +1,12 @@
+# Development and build dependencies for the public test selection.
+# Runtime dependencies of the packages themselves are declared in their own pyproject files.
+# Browser automation needs a separately installed Chromium build and is not part of this list.
+# Versions below are the ones used to validate this candidate; they are not a claim of being newest.
+
+pytest==9.1.1
+ruff==0.16.9
+build==1.6.1
+packaging==26.3
+pyproject-hooks==1.3.3
+httpx==0.28.1
+setuptools==84.0.0
